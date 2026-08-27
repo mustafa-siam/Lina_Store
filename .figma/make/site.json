@@ -1,10 +1,14 @@
 {
-  "description": "A premium, fully responsive static grocery e-commerce site offering fresh products with smooth navigation, product filtering, cart, and wishlist features.",
+  "title": "Lina Store",
+  "description": "Fresh groceries, everyday essentials, and great deals—all in one place.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
+  },
+  "openGraph": {
+    "image": "/og-image.jpg"
   }
 }
