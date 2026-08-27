@@ -8,7 +8,7 @@ const benefits = [
     icon: Truck,
     emoji: "🚚",
     title: "Fast Delivery",
-    description: "Same-day and next-day delivery options. Fresh to your door in hours.",
+    description: "Today and next-day delivery options. Fresh to your door in hours.",
     bg: "bg-blue-50",
     iconColor: "text-blue-600",
   },
