@@ -44,7 +44,7 @@ export default function Newsletter() {
               <span className="font-medium">You're subscribed! Welcome to the Lina Store family.</span>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
+            <form onSubmit={handleSubmit} className="flex gap-3 max-w-sm mx-auto">
               <input
                 type="email"
                 value={email}
