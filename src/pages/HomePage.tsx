@@ -22,7 +22,7 @@ export default function HomePage() {
       <SpecialOffer />
       <ShowingAllCategory categoryLimit={4} productsPerCategory={4} />
       <Testimonials />
-      <Newsletter />
+      {/* <Newsletter /> */}
     </main>
   );
 }
