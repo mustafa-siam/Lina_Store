@@ -1,0 +1,10 @@
+{
+  "description": "A premium, fully responsive static grocery e-commerce site offering fresh products with smooth navigation, product filtering, cart, and wishlist features.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
