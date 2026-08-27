@@ -8,18 +8,21 @@ import WhyChooseUs from "@/components/home/WhyChooseUs";
 import SpecialOffer from "@/components/home/SpecialOffer";
 import Testimonials from "@/components/home/Testimonials";
 import Newsletter from "@/components/home/Newsletter";
+import ShowingAllCategory from "@/components/home/showingAllCategory";
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
-      <Benefits />
+      {/* <Benefits /> */}
       <CategoriesSection />
-      <FeaturedProducts />
-      <PromoBanner />
       <BestSellers />
-      <WhyChooseUs />
+     
+      <PromoBanner />
+       <FeaturedProducts />
+      {/* <WhyChooseUs /> */}
       <SpecialOffer />
+      <ShowingAllCategory categoryLimit={4} productsPerCategory={4} />
       <Testimonials />
       <Newsletter />
     </main>

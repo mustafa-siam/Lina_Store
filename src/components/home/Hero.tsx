@@ -1,132 +1,155 @@
-import { motion } from "motion/react";
-import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles } from "lucide-react";
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+
+const ORIGINAL_SLIDES = [
+  'https://i.ibb.co.com/0Vz0XVhn/h4.jpg',
+  'https://i.ibb.co.com/Pzj36rKP/h1.png',
+  'https://i.ibb.co.com/Pzj36rKP/h1.png',
+  'https://i.ibb.co.com/9Xcv3zZ/h2.png',
+  'https://i.ibb.co.com/vCh6mNGn/h3.png',
+];
+
+// Prepend the last slide and append the first slide for infinite looping
+const SLIDES = [
+  ORIGINAL_SLIDES[ORIGINAL_SLIDES.length - 1],
+  ...ORIGINAL_SLIDES,
+  ORIGINAL_SLIDES[0],
+];
 
 export default function Hero() {
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(true);
+
+  const [activeWidth, setActiveWidth] = useState(76);
+  const inactiveWidth = 85; 
+  const gap = 12; // gap-3 = 12px
+
+  useEffect(() => {
+    const updateWidth = () => {
+      const windowWidth = window.innerWidth;
+      
+      // Match Navbar's exact responsive horizontal padding (px-4 / sm:px-6 / lg:px-8)
+      let padding = 32; // px-4 (16px * 2)
+      if (windowWidth >= 1024) {
+        padding = 64; // lg:px-8 (32px * 2)
+      } else if (windowWidth >= 640) {
+        padding = 48; // sm:px-6 (24px * 2)
+      }
+
+      // Max width of Navbar content area is 1280px minus padding
+      const maxContainerWidth = 1280 - padding;
+      const currentAvailableWidth = windowWidth - padding;
+      const targetWidth = Math.min(currentAvailableWidth, maxContainerWidth);
+
+      const calculatedPercent = (targetWidth / windowWidth) * 100;
+      setActiveWidth(calculatedPercent);
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setIsTransitioning(true);
+    setCurrentIndex((prev) => prev + 1);
+  }, []);
+
+  const handleTransitionEnd = () => {
+    if (currentIndex === 0) {
+      setIsTransitioning(false);
+      setCurrentIndex(SLIDES.length - 2);
+    } else if (currentIndex === SLIDES.length - 1) {
+      setIsTransitioning(false);
+      setCurrentIndex(1);
+    }
+  };
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const interval = setInterval(() => {
+      handleNext();
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [isPlaying, handleNext]);
+
+  // Dynamic alignment transform
+  const translateXOffset =
+    currentIndex * inactiveWidth - (100 - activeWidth) / 2;
+
+  const activeDotIndex =
+    (currentIndex - 1 + ORIGINAL_SLIDES.length) % ORIGINAL_SLIDES.length;
+
   return (
-    <section className="relative overflow-hidden bg-[#f0faf4] min-h-[88vh] flex items-center">
-      {/* Background pattern */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#2a7d4f]/8 blur-3xl" />
-        <div className="absolute bottom-0 -left-16 w-64 h-64 rounded-full bg-amber-400/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/3 w-32 h-32 rounded-full bg-[#2a7d4f]/5 blur-2xl" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
-        {/* Text side */}
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white border border-[#2a7d4f]/20 text-[#2a7d4f] text-sm font-body font-medium px-4 py-2 rounded-full shadow-sm mb-6"
-          >
-            <Sparkles className="w-4 h-4" />
-            Fresh. Natural. Delivered.
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-display text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight"
-          >
-            Fresh Groceries,
-            <span className="text-[#2a7d4f] block">Delivered to</span>
-            Your Door.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-5 text-gray-500 font-body text-lg leading-relaxed max-w-md"
-          >
-            Shop fresh produce, everyday essentials, snacks, beverages and more — all in one place,
-            with same-day delivery.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-8 flex flex-wrap gap-4"
-          >
-            <Link
-              to="/shop"
-              className="inline-flex items-center gap-2 bg-[#2a7d4f] text-white px-7 py-3.5 rounded-xl font-body font-medium text-base hover:bg-[#1e5c39] transition-colors shadow-md shadow-[#2a7d4f]/25"
+    <div className="w-full bg-white py-4 sm:py-6 overflow-hidden">
+      <div className="relative w-full">
+        <div className="flex justify-center items-center">
+          <div className="w-full overflow-hidden">
+            <div
+              onTransitionEnd={handleTransitionEnd}
+              className={`flex gap-3 ${
+                isTransitioning
+                  ? 'transition-transform duration-500 ease-out'
+                  : 'transition-none'
+              }`}
+              style={{
+                transform: `translateX(calc(-${translateXOffset}% - ${
+                  currentIndex * gap
+                }px))`,
+              }}
             >
-              Shop Now
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              to="/offers"
-              className="inline-flex items-center gap-2 border-2 border-[#2a7d4f] text-[#2a7d4f] px-7 py-3.5 rounded-xl font-body font-medium text-base hover:bg-[#2a7d4f] hover:text-white transition-colors"
-            >
-              Explore Offers
-            </Link>
-          </motion.div>
+              {SLIDES.map((imgSrc, index) => {
+                const isActive = currentIndex === index;
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-10 flex items-center gap-6"
-          >
-            {[
-              { value: "10K+", label: "Happy Customers" },
-              { value: "500+", label: "Products" },
-              { value: "4.9★", label: "Rating" },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <p className="font-display text-2xl text-gray-900">{value}</p>
-                <p className="text-gray-500 text-xs font-body">{label}</p>
-              </div>
-            ))}
-          </motion.div>
+                return (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setIsTransitioning(true);
+                      setCurrentIndex(index);
+                    }}
+                    className={`rounded-3xl overflow-hidden shadow-sm border border-gray-100 flex-shrink-0 cursor-pointer transition-all duration-300 relative ${
+                      /* Increased height with responsive height and aspect ratio steps */
+                      'h-[260px] xs:h-[320px] sm:h-[380px] md:h-[440px] lg:h-[480px] xl:h-[520px]'
+                    } ${
+                      isActive
+                        ? 'w-full max-w-[calc(1280px-4rem)] mx-auto opacity-100'
+                        : 'min-w-[85%] opacity-70'
+                    }`}
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={`Slide ${index}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        {/* Image side */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96, x: 20 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="relative"
-        >
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] bg-gray-200">
-            <img
-              src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&h=600&fit=crop&auto=format"
-              alt="Fresh groceries including fruits and vegetables"
-              className="w-full h-full object-cover"
+        {/* Pagination Dots */}
+        <div className="flex items-center justify-center gap-2 mt-4 sm:mt-6">
+          {ORIGINAL_SLIDES.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setIsTransitioning(true);
+                setCurrentIndex(index + 1);
+              }}
+              className={`transition-all duration-300 rounded-full ${
+                activeDotIndex === index
+                  ? 'w-8 h-2.5 bg-gray-600'
+                  : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-          </div>
-
-          {/* Floating cards */}
-          <motion.div
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-4 flex items-center gap-3"
-          >
-            <div className="w-10 h-10 rounded-xl bg-[#e8f5ee] flex items-center justify-center text-xl">
-              🥬
-            </div>
-            <div>
-              <p className="font-body font-semibold text-gray-900 text-sm">100% Organic</p>
-              <p className="text-gray-500 text-xs font-body">Hand-picked daily</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl px-5 py-4"
-          >
-            <p className="font-body font-semibold text-gray-900 text-sm">🚚 Same-day delivery</p>
-            <p className="text-gray-500 text-xs font-body mt-0.5">Order before 2pm</p>
-          </motion.div>
-        </motion.div>
+          ))}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

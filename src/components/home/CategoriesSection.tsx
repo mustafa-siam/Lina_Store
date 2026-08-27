@@ -24,52 +24,39 @@ function CategoryCard({
     >
       <Link
         to={`/shop/${category.slug}`}
-        className="group block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300"
+        className="group block text-center"
       >
-        <div className="relative overflow-hidden aspect-[4/3] bg-gray-100">
+        {/* Category Image */}
+        <div className="w-full aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:shadow-md">
           <img
             src={category.image}
             alt={category.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-            <div>
-              <p className="text-white font-display text-lg leading-tight">{category.name}</p>
-              <p className="text-white/80 text-xs font-body">{category.productCount} products</p>
-            </div>
-            <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:translate-x-1 transition-transform duration-200">
-              <ArrowRight className="w-4 h-4 text-white" />
-            </div>
-          </div>
         </div>
+
+        {/* Category Name */}
+        <p className="mt-3 text-gray-800 font-body text-base font-medium group-hover:text-[#2a7d4f] transition-colors duration-200">
+          {category.name}
+        </p>
       </Link>
     </motion.div>
   );
 }
-
 export default function CategoriesSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-[#f8f7f3]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           label="Browse by Category"
           title="Everything You Need"
           subtitle="From farm-fresh produce to household essentials — organized for easy shopping."
         />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-5">
-          {categories.slice(0, 9).map((cat, i) => (
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-8">
+          {categories.slice(0, 4).map((cat, i) => (
             <CategoryCard key={cat.id} category={cat} index={i} />
           ))}
-        </div>
-        <div className="mt-10 text-center">
-          <Link
-            to="/categories"
-            className="inline-flex items-center gap-2 border border-gray-200 bg-white text-gray-700 px-6 py-3 rounded-xl font-body text-sm font-medium hover:border-[#2a7d4f] hover:text-[#2a7d4f] transition-colors"
-          >
-            View All Categories
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </section>
